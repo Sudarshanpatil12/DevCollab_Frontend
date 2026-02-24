@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { files as filesApi, getApiErrorMessage } from '../services/api';
+import { useAuth } from '../hooks/useAuth';
+
+const MAX_UPLOAD_BYTES = 3 * 1024 * 1024;
 
 async function fileToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -25,8 +28,10 @@ export function FileUploadPanel({ projectId, isAdmin }) {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
+  const { user } = useAuth();
 
   const loadFiles = useCallback(async () => {
+    setLoading(true);
     try {
       const { data } = await filesApi.byProject(projectId);
       setItems(Array.isArray(data) ? data : []);
@@ -41,9 +46,19 @@ export function FileUploadPanel({ projectId, isAdmin }) {
     loadFiles();
   }, [loadFiles]);
 
+  useEffect(() => {
+    const timer = setInterval(loadFiles, 8000);
+    return () => clearInterval(timer);
+  }, [loadFiles]);
+
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setError('File is too large. Max upload size is 3MB.');
+      e.target.value = '';
+      return;
+    }
 
     setError('');
     setUploading(true);
@@ -84,6 +99,7 @@ export function FileUploadPanel({ projectId, isAdmin }) {
           <input type="file" className="hidden" onChange={handleUpload} disabled={uploading} />
         </label>
       </div>
+      <p className="text-[11px] text-slate-500 mb-2">Visible to all project members. Max file size: 3MB.</p>
       {error && <p className="text-xs text-red-400 mb-2">{error}</p>}
       {loading ? (
         <p className="text-sm text-slate-400">Loading files...</p>
@@ -109,7 +125,7 @@ export function FileUploadPanel({ projectId, isAdmin }) {
                   >
                     Download
                   </a>
-                  {isAdmin && (
+                  {(isAdmin || item.uploadedBy?._id === user?._id) && (
                     <button
                       type="button"
                       onClick={() => handleDelete(item._id)}
