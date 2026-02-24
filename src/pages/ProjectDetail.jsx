@@ -15,6 +15,7 @@ export function ProjectDetail() {
   const [memberEmail, setMemberEmail] = useState('');
   const [memberError, setMemberError] = useState('');
   const [memberLoading, setMemberLoading] = useState(false);
+  const [activeSidePanel, setActiveSidePanel] = useState('chat');
   const { user } = useAuth();
 
   useEffect(() => {
@@ -170,12 +171,50 @@ export function ProjectDetail() {
               </div>
             </section>
 
-            <section className="rounded-2xl bg-slate-900/60 border border-slate-700/80 p-5 shadow-lg shadow-black/20">
-              <h2 className="text-lg font-semibold mb-4">Chat</h2>
-              <ChatBox projectId={project._id} />
+            <section className="rounded-2xl bg-slate-900/60 border border-slate-700/80 p-3 shadow-lg shadow-black/20">
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                <button
+                  type="button"
+                  onClick={() => setActiveSidePanel('chat')}
+                  className={`px-2 py-2 rounded-lg text-xs ${activeSidePanel === 'chat' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+                >
+                  Chat
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveSidePanel('files')}
+                  className={`px-2 py-2 rounded-lg text-xs ${activeSidePanel === 'files' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+                >
+                  Files
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveSidePanel('analytics')}
+                  className={`px-2 py-2 rounded-lg text-xs ${activeSidePanel === 'analytics' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+                >
+                  Analytics
+                </button>
+              </div>
+
+              {activeSidePanel === 'chat' && (
+                <div>
+                  <h2 className="text-base font-semibold mb-3">Chat</h2>
+                  <ChatBox projectId={project._id} />
+                </div>
+              )}
+              {activeSidePanel === 'files' && (
+                <div>
+                  <h2 className="text-base font-semibold mb-3">Files</h2>
+                  <FileUploadPanel projectId={project._id} isAdmin={isAdmin} />
+                </div>
+              )}
+              {activeSidePanel === 'analytics' && (
+                <div>
+                  <h2 className="text-base font-semibold mb-3">Analytics</h2>
+                  <ProjectAnalyticsPanel projectId={project._id} />
+                </div>
+              )}
             </section>
-            <FileUploadPanel projectId={project._id} isAdmin={isAdmin} />
-            <ProjectAnalyticsPanel projectId={project._id} />
           </div>
         </div>
       </div>

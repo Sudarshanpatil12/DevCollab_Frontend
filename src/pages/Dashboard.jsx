@@ -10,6 +10,7 @@ export function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showCreate, setShowCreate] = useState(false);
+  const [showAnalytics, setShowAnalytics] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const { user } = useAuth();
@@ -53,22 +54,31 @@ export function Dashboard() {
             <span className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 flex items-center justify-center text-sm">📊</span>
             Projects
           </h1>
-          {isAdmin && (
+          <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => setShowCreate(true)}
-              className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium"
+              onClick={() => setShowAnalytics((prev) => !prev)}
+              className="px-3 py-2 rounded-lg border border-slate-600 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm"
             >
-              New project
+              {showAnalytics ? 'Hide analytics' : 'Show analytics'}
             </button>
-          )}
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => setShowCreate(true)}
+                className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium"
+              >
+                New project
+              </button>
+            )}
+          </div>
         </div>
 
         {error && (
           <p className="mb-4 text-red-400 bg-red-400/10 rounded-lg p-3">{error}</p>
         )}
 
-        <DashboardAnalytics />
+        {showAnalytics && <DashboardAnalytics />}
 
         {showCreate && (
           <form
