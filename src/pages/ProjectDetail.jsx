@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { projects as projectsApi } from '../services/api';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { TaskBoard } from '../components/TaskBoard';
 import { ChatBox } from '../components/ChatBox';
 

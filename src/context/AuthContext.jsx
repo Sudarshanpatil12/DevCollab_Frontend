@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import { auth as authApi } from '../services/api';
 
 const AuthContext = createContext(null);
@@ -55,8 +55,4 @@ export function AuthProvider({ children }) {
   );
 }
 
-export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
-  return ctx;
-}
+export { AuthContext };

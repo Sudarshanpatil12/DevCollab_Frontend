@@ -1,7 +1,15 @@
 import axios from 'axios';
 
-// Prefer VITE_API_URL (set in Vercel or .env). If not provided, fall back to current origin.
-const API_BASE = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+const envApiBase =
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_API_BASE_URL ||
+  import.meta.env.VITE_BACKEND_URL ||
+  '';
+
+// Trim trailing slashes so '/api/*' joins correctly.
+const API_BASE = envApiBase
+  ? envApiBase.replace(/\/+$/, '')
+  : (typeof window !== 'undefined' ? window.location.origin : '');
 
 export const api = axios.create({
   baseURL: API_BASE,
@@ -12,7 +20,7 @@ api.interceptors.request.use((config) => {
   try {
     const token = localStorage.getItem('devcollab_token');
     if (token) config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
-  } catch (e) {
+  } catch {
     // ignore (e.g., during SSR)
   }
   return config;

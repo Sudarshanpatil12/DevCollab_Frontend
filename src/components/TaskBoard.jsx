@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { tasks as tasksApi, projects as projectsApi } from '../services/api';
-import { useAuth } from '../context/AuthContext';
 
 const STATUSES = ['To Do', 'In Progress', 'Completed'];
 
@@ -12,23 +11,22 @@ export function TaskBoard({ projectId, isAdmin }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
-  const { user } = useAuth();
-
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       const { data } = await tasksApi.byProject(projectId);
       setTasks(data);
-    } catch {
+    } catch (error) {
+      console.error('Failed to fetch tasks', error);
       setTasks([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId]);
 
   useEffect(() => {
     fetchTasks();
     projectsApi.get(projectId).then(({ data }) => setMembers(data.members || [])).catch(() => setMembers([]));
-  }, [projectId]);
+  }, [projectId, fetchTasks]);
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -44,14 +42,18 @@ export function TaskBoard({ projectId, isAdmin }) {
       setAssignedTo('');
       setShowForm(false);
       fetchTasks();
-    } catch {}
+    } catch (error) {
+      console.error('Failed to create task', error);
+    }
   };
 
   const handleStatusChange = async (taskId, status) => {
     try {
       await tasksApi.update(taskId, { status });
       fetchTasks();
-    } catch {}
+    } catch (error) {
+      console.error('Failed to update task status', error);
+    }
   };
 
   const handleDelete = async (taskId) => {
@@ -59,7 +61,9 @@ export function TaskBoard({ projectId, isAdmin }) {
     try {
       await tasksApi.delete(taskId);
       fetchTasks();
-    } catch {}
+    } catch (error) {
+      console.error('Failed to delete task', error);
+    }
   };
 
   if (loading) return <p className="text-slate-400">Loading tasks...</p>;
