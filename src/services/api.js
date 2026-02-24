@@ -80,6 +80,22 @@ export const messages = {
   create: (projectId, message) => api.post(`/api/messages/project/${projectId}`, { message }),
 };
 
+export const files = {
+  byProject: (projectId) => api.get(`/api/files/project/${projectId}`),
+  upload: (projectId, payload) => api.post(`/api/files/project/${projectId}`, payload),
+  remove: (fileId) => api.delete(`/api/files/${fileId}`),
+  downloadUrl: (fileId) => `${API_BASE}/api/files/${fileId}/download`,
+};
+
+export const analytics = {
+  overview: () => api.get('/api/analytics/overview'),
+  byProject: (projectId) => api.get(`/api/analytics/project/${projectId}`),
+};
+
+export const users = {
+  myProfile: () => api.get('/api/users/me/profile'),
+};
+
 export function getApiErrorMessage(err, fallbackMessage) {
   const payload = err?.response?.data;
   const value = payload?.error ?? payload?.message;

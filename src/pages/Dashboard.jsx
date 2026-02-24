@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { projects as projectsApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { ProjectCard } from '../components/ProjectCard';
+import { DashboardAnalytics } from '../components/DashboardAnalytics';
 
 export function Dashboard() {
   const [projects, setProjects] = useState([]);
@@ -48,7 +49,10 @@ export function Dashboard() {
     <div className="min-h-screen bg-slate-900 text-slate-100">
       <div className="max-w-5xl mx-auto p-6">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold">Projects</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <span className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 flex items-center justify-center text-sm">📊</span>
+            Projects
+          </h1>
           {isAdmin && (
             <button
               type="button"
@@ -63,6 +67,8 @@ export function Dashboard() {
         {error && (
           <p className="mb-4 text-red-400 bg-red-400/10 rounded-lg p-3">{error}</p>
         )}
+
+        <DashboardAnalytics />
 
         {showCreate && (
           <form

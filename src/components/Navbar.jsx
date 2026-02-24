@@ -11,19 +11,25 @@ const IconLogo = () => (
 
 export function Navbar() {
   const { user, logout } = useAuth();
+  const initial = user?.name?.[0]?.toUpperCase() || 'U';
 
   return (
     <nav className="bg-slate-800/95 border-b border-slate-700 px-4 py-3 flex items-center justify-between backdrop-blur">
       <Link to="/" className="flex items-center gap-2 text-white hover:text-slate-200 transition">
         <IconLogo />
-        <span className="text-xl font-semibold">DevCollab</span>
+        <span className="text-xl font-semibold">DevCollab Pro</span>
       </Link>
       <div className="flex items-center gap-4">
         {user ? (
           <>
-            <span className="text-slate-300 text-sm">
-              {user.name} <span className="text-slate-500">({user.role})</span>
-            </span>
+            <Link to="/profile" className="flex items-center gap-2 text-slate-300 text-sm hover:text-white transition">
+              <span className="w-8 h-8 rounded-full border border-emerald-500/50 bg-emerald-500/15 text-emerald-300 flex items-center justify-center text-xs font-semibold">
+                {initial}
+              </span>
+              <span>
+                {user.name} <span className="text-slate-500">({user.role})</span>
+              </span>
+            </Link>
             <button
               type="button"
               onClick={logout}

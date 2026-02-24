@@ -4,6 +4,8 @@ import { projects as projectsApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { TaskBoard } from '../components/TaskBoard';
 import { ChatBox } from '../components/ChatBox';
+import { FileUploadPanel } from '../components/FileUploadPanel';
+import { ProjectAnalyticsPanel } from '../components/ProjectAnalyticsPanel';
 
 export function ProjectDetail() {
   const { id } = useParams();
@@ -172,6 +174,8 @@ export function ProjectDetail() {
               <h2 className="text-lg font-semibold mb-4">Chat</h2>
               <ChatBox projectId={project._id} />
             </section>
+            <FileUploadPanel projectId={project._id} isAdmin={isAdmin} />
+            <ProjectAnalyticsPanel projectId={project._id} />
           </div>
         </div>
       </div>
