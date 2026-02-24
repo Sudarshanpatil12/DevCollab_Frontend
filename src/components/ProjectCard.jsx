@@ -21,7 +21,7 @@ export function ProjectCard({ project, isAdmin, onDeleted }) {
 
   return (
     <div className="rounded-xl bg-slate-800 border border-slate-700 p-4 hover:border-slate-600 transition">
-      <Link to={`/project/${project._id}`} className="block">
+      <Link to={`/projects/${project._id}`} className="block">
         <h3 className="font-semibold text-white truncate">{project.title}</h3>
         <p className="text-slate-400 text-sm mt-1 line-clamp-2">
           {project.description || 'No description'}

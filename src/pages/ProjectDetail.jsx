@@ -68,7 +68,7 @@ export function ProjectDetail() {
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100">
       <div className="max-w-6xl mx-auto p-6">
-        <Link to="/" className="text-slate-400 hover:text-white text-sm mb-4 inline-block">
+        <Link to="/projects" className="text-slate-400 hover:text-white text-sm mb-4 inline-block">
           ← Back to projects
         </Link>
         <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
