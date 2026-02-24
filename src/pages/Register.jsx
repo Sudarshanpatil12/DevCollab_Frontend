@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { getApiErrorMessage } from '../services/api';
 
 const IconLogo = () => (
   <svg className="w-14 h-14 text-emerald-400" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -52,7 +53,7 @@ export function Register() {
       await register(name, email, password, role, { redirectToLogin: true });
       navigate('/login', { state: { registered: true } });
     } catch (err) {
-      setError(err.response?.data?.error || err.response?.data?.message || 'Registration failed');
+      setError(getApiErrorMessage(err, 'Registration failed'));
     } finally {
       setLoading(false);
     }

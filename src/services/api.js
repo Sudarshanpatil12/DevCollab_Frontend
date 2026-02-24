@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+const BACKEND_FALLBACK = 'https://dev-collab-backend-two.vercel.app';
+
 const envApiBase =
   import.meta.env.VITE_API_URL ||
   import.meta.env.VITE_API_BASE_URL ||
@@ -7,11 +9,18 @@ const envApiBase =
   '';
 
 const isPlaceholderUrl = /backend-url\.vercel\.app/i.test(envApiBase);
+const isLocalhost =
+  typeof window !== 'undefined' &&
+  ['localhost', '127.0.0.1'].includes(window.location.hostname);
+
+const resolvedBase = envApiBase && !isPlaceholderUrl
+  ? envApiBase
+  : (isLocalhost
+      ? (typeof window !== 'undefined' ? window.location.origin : '')
+      : BACKEND_FALLBACK);
 
 // Trim trailing slashes so '/api/*' joins correctly.
-const API_BASE = envApiBase && !isPlaceholderUrl
-  ? envApiBase.replace(/\/+$/, '')
-  : (typeof window !== 'undefined' ? window.location.origin : '');
+const API_BASE = resolvedBase.replace(/\/+$/, '');
 
 if (isPlaceholderUrl) {
   console.warn('Ignoring placeholder backend URL. Set VITE_API_URL to your real backend URL.');
@@ -65,5 +74,14 @@ export const tasks = {
   update: (id, data) => api.put(`/api/tasks/${id}`, data),
   delete: (id) => api.delete(`/api/tasks/${id}`),
 };
+
+export function getApiErrorMessage(err, fallbackMessage) {
+  const payload = err?.response?.data;
+  const value = payload?.error ?? payload?.message;
+  if (typeof value === 'string') return value;
+  if (value && typeof value === 'object' && typeof value.message === 'string') return value.message;
+  if (typeof err?.message === 'string' && err.message) return err.message;
+  return fallbackMessage;
+}
 
 export default api;
