@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
+// Prefer VITE_API_URL (set in Vercel or .env). If not provided, fall back to current origin.
+const API_BASE = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? window.location.origin : '');
 
 export const api = axios.create({
   baseURL: API_BASE,
@@ -8,8 +9,12 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('devcollab_token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  try {
+    const token = localStorage.getItem('devcollab_token');
+    if (token) config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
+  } catch (e) {
+    // ignore (e.g., during SSR)
+  }
   return config;
 });
 
@@ -46,3 +51,5 @@ export const tasks = {
   update: (id, data) => api.put(`/api/tasks/${id}`, data),
   delete: (id) => api.delete(`/api/tasks/${id}`),
 };
+
+export default api;
