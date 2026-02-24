@@ -75,6 +75,11 @@ export const tasks = {
   delete: (id) => api.delete(`/api/tasks/${id}`),
 };
 
+export const messages = {
+  byProject: (projectId) => api.get(`/api/messages/project/${projectId}`),
+  create: (projectId, message) => api.post(`/api/messages/project/${projectId}`, { message }),
+};
+
 export function getApiErrorMessage(err, fallbackMessage) {
   const payload = err?.response?.data;
   const value = payload?.error ?? payload?.message;
