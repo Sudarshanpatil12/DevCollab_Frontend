@@ -15,3 +15,20 @@ The React Compiler is not enabled on this template because of its impact on dev 
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
 # DevCollab_Frontend
+
+## Environment
+
+This project expects the backend base URL to be provided at build time using a Vite env var.
+
+- Create a file named `.env` (local development) or set the variable in Vercel project settings.
+- Required variable:
+
+	- `VITE_API_URL` — full URL of your backend (example: `https://dev-collab-backend.onrender.com`)
+
+Example `.env` (local):
+
+```
+VITE_API_URL=http://localhost:5001
+```
+
+On Vercel: add `VITE_API_URL` under Project → Settings → Environment Variables and set it for `Production` (and `Preview` if needed).
