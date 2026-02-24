@@ -6,16 +6,22 @@ const envApiBase =
   import.meta.env.VITE_BACKEND_URL ||
   '';
 
+const isPlaceholderUrl = /backend-url\.vercel\.app/i.test(envApiBase);
+
 // Trim trailing slashes so '/api/*' joins correctly.
-const API_BASE = envApiBase
+const API_BASE = envApiBase && !isPlaceholderUrl
   ? envApiBase.replace(/\/+$/, '')
   : (typeof window !== 'undefined' ? window.location.origin : '');
+
+if (isPlaceholderUrl) {
+  console.warn('Ignoring placeholder backend URL. Set VITE_API_URL to your real backend URL.');
+}
 
 export const api = axios.create({
   baseURL: API_BASE,
   headers: { 'Content-Type': 'application/json' },
 });
-
+ 
 api.interceptors.request.use((config) => {
   try {
     const token = localStorage.getItem('devcollab_token');
