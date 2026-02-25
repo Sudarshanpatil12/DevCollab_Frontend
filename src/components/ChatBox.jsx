@@ -10,6 +10,7 @@ export function ChatBox({ projectId }) {
   const [isOpen, setIsOpen] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
   const [error, setError] = useState('');
+  const [lastFailedMessage, setLastFailedMessage] = useState('');
   const bottomRef = useRef(null);
   const knownMessageIdsRef = useRef(new Set());
   const { user } = useAuth();
@@ -75,11 +76,19 @@ export function ChatBox({ projectId }) {
       const { data } = await messagesApi.create(projectId, text);
       setMessages((prev) => [...prev, data]);
       setInput('');
+      setLastFailedMessage('');
     } catch (err) {
       setError(getApiErrorMessage(err, 'Message send failed'));
+      setLastFailedMessage(text);
     } finally {
       setSending(false);
     }
+  };
+
+  const retryLastMessage = async () => {
+    if (!lastFailedMessage) return;
+    setInput(lastFailedMessage);
+    setLastFailedMessage('');
   };
 
   if (!isOpen) {
@@ -134,9 +143,18 @@ export function ChatBox({ projectId }) {
           <p className="text-slate-500 text-sm">No messages yet. Say hi!</p>
         )}
         {error && (
-          <p className="text-red-300 text-xs bg-red-500/10 border border-red-500/30 rounded-lg px-2 py-1">
-            {error}
-          </p>
+          <div className="text-xs bg-red-500/10 border border-red-500/30 rounded-lg px-2 py-1">
+            <p className="text-red-300">{error}</p>
+            {lastFailedMessage && (
+              <button
+                type="button"
+                onClick={retryLastMessage}
+                className="mt-1 text-red-200 hover:text-white underline"
+              >
+                Retry message
+              </button>
+            )}
+          </div>
         )}
         {messages.map((m) => (
           <div key={makeMessageKey(m)} className="text-sm">

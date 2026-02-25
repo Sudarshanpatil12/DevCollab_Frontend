@@ -16,12 +16,15 @@ export function ProjectDetail() {
   const [memberError, setMemberError] = useState('');
   const [memberLoading, setMemberLoading] = useState(false);
   const [activeSidePanel, setActiveSidePanel] = useState('chat');
+  const [overview, setOverview] = useState(null);
   const { user } = useAuth();
 
   useEffect(() => {
-    projectsApi
-      .get(id)
-      .then(({ data }) => setProject(data))
+    Promise.all([projectsApi.get(id), projectsApi.overview(id)])
+      .then(([projectRes, overviewRes]) => {
+        setProject(projectRes.data);
+        setOverview(overviewRes.data);
+      })
       .catch((err) => setError(err.response?.data?.message || 'Project not found'))
       .finally(() => setLoading(false));
   }, [id]);
@@ -87,6 +90,28 @@ export function ProjectDetail() {
             </span>
           </div>
         </div>
+
+        <section className="rounded-2xl bg-slate-900/60 border border-slate-700/80 p-4 shadow-lg shadow-black/20 mb-6">
+          <h2 className="text-sm uppercase tracking-wide text-slate-400 mb-2">Project Snapshot</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            <div className="rounded-lg border border-slate-700 bg-slate-800/60 p-3">
+              <p className="text-[11px] text-slate-500">Progress</p>
+              <p className="text-xl font-semibold text-emerald-300">{overview?.summary?.completion?.progressPct ?? 0}%</p>
+            </div>
+            <div className="rounded-lg border border-slate-700 bg-slate-800/60 p-3">
+              <p className="text-[11px] text-slate-500">Tasks</p>
+              <p className="text-xl font-semibold">{overview?.summary?.completion?.total ?? 0}</p>
+            </div>
+            <div className="rounded-lg border border-slate-700 bg-slate-800/60 p-3">
+              <p className="text-[11px] text-slate-500">Files</p>
+              <p className="text-xl font-semibold">{overview?.summary?.files ?? 0}</p>
+            </div>
+            <div className="rounded-lg border border-slate-700 bg-slate-800/60 p-3">
+              <p className="text-[11px] text-slate-500">Recent Messages</p>
+              <p className="text-xl font-semibold">{overview?.summary?.recentMessages ?? 0}</p>
+            </div>
+          </div>
+        </section>
 
         <div className="grid gap-8 lg:grid-cols-4">
           <div className="lg:col-span-3 space-y-6">

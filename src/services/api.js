@@ -62,6 +62,7 @@ export const auth = {
 export const projects = {
   list: () => api.get('/api/projects'),
   get: (id) => api.get(`/api/projects/${id}`),
+  overview: (id) => api.get(`/api/projects/${id}/overview`),
   create: (data) => api.post('/api/projects', data),
   update: (id, data) => api.put(`/api/projects/${id}`, data),
   delete: (id) => api.delete(`/api/projects/${id}`),
@@ -98,9 +99,12 @@ export const users = {
 
 export function getApiErrorMessage(err, fallbackMessage) {
   const payload = err?.response?.data;
-  const value = payload?.error ?? payload?.message;
+  const value = payload?.error ?? payload?.message ?? payload?.reason;
   if (typeof value === 'string') return value;
   if (value && typeof value === 'object' && typeof value.message === 'string') return value.message;
+  if (typeof payload?.reason === 'string' && payload.reason) {
+    return `${fallbackMessage}: ${payload.reason}`;
+  }
   if (typeof err?.message === 'string' && err.message) return err.message;
   return fallbackMessage;
 }
