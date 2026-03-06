@@ -21,6 +21,8 @@ const resolvedBase = envApiBase && !isPlaceholderUrl
 
 // Trim trailing slashes so '/api/*' joins correctly.
 const API_BASE = resolvedBase.replace(/\/+$/, '');
+export const SOCKET_BASE =
+  (import.meta.env.VITE_SOCKET_URL || API_BASE).replace(/\/+$/, '');
 
 if (isPlaceholderUrl) {
   console.warn('Ignoring placeholder backend URL. Set VITE_API_URL to your real backend URL.');
